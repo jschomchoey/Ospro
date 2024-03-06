@@ -1,14 +1,11 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import ttk, filedialog
-import openpyxl
-import os
+from tkinter import ttk
+import csv
 
 window = tk.Tk()
 window.title("Apple Stock")
 window.minsize(800, 400)
-# window.geometry("865x400")
-# root.resizable(False, False)
 
 button_frame = Frame()
 button_frame.pack(
@@ -21,7 +18,6 @@ button_frame.pack(
 def addProduct():
     add = Toplevel(window)
     add.resizable(False, False)
-    # add.geometry("750x170")
     add.title("Add Product")
 
     detailFrame = Frame(add)
@@ -84,7 +80,7 @@ def addProduct():
         text="OK",
         height=3,
         command=lambda: [
-            addProductToXlsx(
+            addProductToCsv(
                 IDEntry.get(),
                 NameEntry.get(),
                 variable.get(),
@@ -103,26 +99,41 @@ def addProduct():
     )
 
 
-def addProductToXlsx(
+def addProductToCsv(
     productID, productName, productStorage, productColor, productPrice, productQuantity
 ):
+    path = "product.csv"
+    with open(path, mode="r") as file:
+        reader = csv.reader(file)
+        rows = list(reader)
+        for row in rows:
+            if row[0] == productID:
+                # ID already exists, show notification and return
+                show_notification("Product with ID already exists.")
+                return
 
-    path = "product.xlsx"
-    workbook = openpyxl.load_workbook(path)
-    sheet = workbook.active
-
-    last_row = sheet.max_row
-
-    sheet.cell(row=last_row + 1, column=1).value = productID
-    sheet.cell(row=last_row + 1, column=2).value = productName
-    sheet.cell(row=last_row + 1, column=3).value = productStorage
-    sheet.cell(row=last_row + 1, column=4).value = productColor
-    sheet.cell(row=last_row + 1, column=5).value = productPrice
-    sheet.cell(row=last_row + 1, column=6).value = productQuantity
-
-    workbook.save(path)
+    with open(path, mode="a", newline="") as file:
+        writer = csv.writer(file)
+        writer.writerow(
+            [
+                productID,
+                productName,
+                productStorage,
+                productColor,
+                productPrice,
+                productQuantity,
+            ]
+        )
 
     load_data()
+
+
+def show_notification(message):
+    notification = tk.Toplevel(window)
+    notification.title("Notification")
+    notification.geometry("300x100")
+    Label(notification, text=message).pack(padx=20, pady=20)
+    notification.after(2000, notification.destroy)
 
 
 def removeProduct():
@@ -146,7 +157,7 @@ def removeProduct():
         text="OK",
         height=3,
         command=lambda: [
-            removeProductFromXlsx(IDEntry.get()),
+            confirmDeletion(IDEntry.get()),
             remove.destroy(),
         ],
     )
@@ -158,18 +169,68 @@ def removeProduct():
     )
 
 
-def removeProductFromXlsx(productID):
-    path = "product.xlsx"
-    workbook = openpyxl.load_workbook(path)
-    sheet = workbook.active
+def confirmDeletion(productID):
+    confirm = Toplevel(window)
+    confirm.resizable(False, False)
+    confirm.title("Confirm Deletion")
 
-    for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=1):
-        for cell in row:
-            if cell.value == productID:
-                sheet.delete_rows(cell.row, 1)
-                break
+    detailFrame = Frame(confirm)
+    detailFrame.pack(
+        fill=tk.X,
+        pady=10,
+        padx=20,
+    )
 
-    workbook.save(path)
+    with open("product.csv", mode="r") as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row[0] == productID:
+                Label(detailFrame, text=f"ID: {row[0]}").pack(side="left")
+                Label(detailFrame, text=f"Name: {row[1]}").pack(side="left")
+                Label(detailFrame, text=f"Storage: {row[2]}").pack(side="left")
+                Label(detailFrame, text=f"Color: {row[3]}").pack(side="left")
+                Label(detailFrame, text=f"Price: {row[4]}").pack(side="left")
+                Label(detailFrame, text=f"Quantity: {row[5]}").pack(side="left")
+
+    buttonFrame = Frame(confirm)
+    buttonFrame.pack(
+        fill=tk.X,
+        pady=10,
+        padx=20,
+    )
+
+    confirm_button = tk.Button(
+        buttonFrame,
+        text="Confirm Deletion",
+        height=3,
+        command=lambda: [
+            removeProductFromCsv(productID),
+            confirm.destroy(),
+        ],
+    )
+    confirm_button.pack(side="left", fill=tk.X, expand=True, padx=10)
+
+    cancel_button = tk.Button(
+        buttonFrame,
+        text="Cancel",
+        height=3,
+        command=confirm.destroy,
+    )
+    cancel_button.pack(side="left", fill=tk.X, expand=True, padx=10)
+
+
+def removeProductFromCsv(productID):
+    path = "product.csv"
+    with open(path, mode="r") as file:
+        reader = csv.reader(file)
+        rows = list(reader)
+
+    with open(path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        for row in rows:
+            if row[0] != productID:
+                writer.writerow(row)
+
     load_data()
 
 
@@ -189,7 +250,7 @@ def editProduct():
     IDEntry = Entry(detailFrame)
     IDEntry.pack(side="left", fill=tk.X, expand=True, padx=10)
 
-    Label(detailFrame, text="New Name").pack(side="left")
+    Label(detailFrame, text="Name").pack(side="left")
 
     NameEntry = Entry(detailFrame)
     NameEntry.pack(side="left", fill=tk.X, expand=True, padx=10)
@@ -204,7 +265,7 @@ def editProduct():
         "2 TB",
     ]
 
-    Label(detailFrame, text="New Storage").pack(side="left")
+    Label(detailFrame, text="Storage").pack(side="left")
 
     variable = StringVar(edit)
     variable.set(OPTIONS[0])
@@ -221,15 +282,15 @@ def editProduct():
         padx=20,
     )
 
-    Label(colorFrame, text="New Color").pack(side="left")
+    Label(colorFrame, text="Color").pack(side="left")
     ColorEntry = Entry(colorFrame)
     ColorEntry.pack(side="left", fill=tk.X, expand=True, padx=10)
 
-    Label(colorFrame, text="New Price").pack(side="left")
+    Label(colorFrame, text="Price").pack(side="left")
     PriceEntry = Entry(colorFrame)
     PriceEntry.pack(side="left", fill=tk.X, expand=True, padx=10)
 
-    Label(colorFrame, text="New Quantity").pack(side="left")
+    Label(colorFrame, text="Quantity").pack(side="left")
     QuantityEntry = Entry(colorFrame)
     QuantityEntry.pack(side="left", fill=tk.X, expand=True, padx=10)
 
@@ -238,7 +299,7 @@ def editProduct():
         text="OK",
         height=3,
         command=lambda: [
-            editProductInXlsx(
+            editProductInCsv(
                 IDEntry.get(),
                 NameEntry.get(),
                 variable.get(),
@@ -257,25 +318,30 @@ def editProduct():
     )
 
 
-def editProductInXlsx(
+def editProductInCsv(
     productID, productName, productStorage, productColor, productPrice, productQuantity
 ):
+    path = "product.csv"
+    with open(path, mode="r") as file:
+        reader = csv.reader(file)
+        rows = list(reader)
 
-    path = "product.xlsx"
-    workbook = openpyxl.load_workbook(path)
-    sheet = workbook.active
+    with open(path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        for row in rows:
+            if row[0] == productID:
+                if productName.strip():
+                    row[1] = productName
+                if productStorage.strip():
+                    row[2] = productStorage
+                if productColor.strip():
+                    row[3] = productColor
+                if productPrice.strip():
+                    row[4] = productPrice
+                if productQuantity.strip():
+                    row[5] = productQuantity
+            writer.writerow(row)
 
-    for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=1):
-        for cell in row:
-            if cell.value == productID:
-                sheet.cell(row=cell.row, column=2).value = productName
-                sheet.cell(row=cell.row, column=3).value = productStorage
-                sheet.cell(row=cell.row, column=4).value = productColor
-                sheet.cell(row=cell.row, column=5).value = productPrice
-                sheet.cell(row=cell.row, column=6).value = productQuantity
-                break
-
-    workbook.save(path)
     load_data()
 
 
@@ -290,22 +356,22 @@ def findProduct():
         pady=10,
         padx=20,
     )
-    Label(detailFrame, text="ID").pack(side="left")
-
-    IDEntry = Entry(detailFrame)
-    IDEntry.pack(side="left", fill=tk.X, expand=True, padx=10)
-
-    Label(detailFrame, text="Name").pack(side="left")
+    Label(detailFrame, text="Product Name").pack(side="left")
 
     NameEntry = Entry(detailFrame)
     NameEntry.pack(side="left", fill=tk.X, expand=True, padx=10)
+
+    Label(detailFrame, text="Product Code").pack(side="left")
+
+    CodeEntry = Entry(detailFrame)
+    CodeEntry.pack(side="left", fill=tk.X, expand=True, padx=10)
 
     button = tk.Button(
         find,
         text="Find",
         height=3,
         command=lambda: [
-            findProductInXlsx(IDEntry.get(), NameEntry.get()),
+            findProductInCsv(NameEntry.get(), CodeEntry.get()),
             find.destroy(),
         ],
     )
@@ -317,28 +383,27 @@ def findProduct():
     )
 
 
-def findProductInXlsx(productID, productName):
+def findProductInCsv(productName, productCode):
     for widget in window.winfo_children():
         if isinstance(widget, ttk.Treeview):
             widget.destroy()
-    path = "product.xlsx"
-    workbook = openpyxl.load_workbook(path)
-    sheet = workbook.active
+    path = "product.csv"
+    with open(path, mode="r") as file:
+        reader = csv.reader(file)
+        rows = list(reader)
 
-    list_values = list(sheet.values)
-
-    cols = list_values[0]
+    cols = rows[0]
     tree = ttk.Treeview(window, columns=cols, show="headings")
 
     for col_name in cols:
         tree.heading(col_name, text=col_name)
     tree.pack(expand=True, fill="y")
 
-    for value_tuple in list_values[1:]:
-        if (not productID or value_tuple[0] == productID) and (
-            not productName or value_tuple[1] == productName
+    for row in rows[1:]:
+        if (productName.lower() in row[1].lower() or not productName) and (
+            productCode.lower() in row[0].lower() or not productCode
         ):
-            tree.insert("", tk.END, values=value_tuple)
+            tree.insert("", tk.END, values=row)
 
 
 def sellProduct():
@@ -367,7 +432,7 @@ def sellProduct():
         text="OK",
         height=3,
         command=lambda: [
-            sellProductByID(IDEntry.get(), QuantityEntry.get()),
+            confirmSale(IDEntry.get(), QuantityEntry.get()),
             sell.destroy(),
         ],
     )
@@ -379,22 +444,74 @@ def sellProduct():
     )
 
 
-def sellProductByID(productID, quantity):
-    path = "product.xlsx"
-    workbook = openpyxl.load_workbook(path)
-    sheet = workbook.active
+def confirmSale(productID, quantity):
+    confirm = Toplevel(window)
+    confirm.resizable(False, False)
+    confirm.title("Confirm Sale")
 
-    for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row, min_col=1, max_col=1):
-        for cell in row:
-            if cell.value == productID:
-                current_quantity = sheet.cell(row=cell.row, column=6).value
-                new_quantity = int(current_quantity) - int(quantity)
+    detailFrame = Frame(confirm)
+    detailFrame.pack(
+        fill=tk.X,
+        pady=10,
+        padx=20,
+    )
+
+    with open("product.csv", mode="r") as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row[0] == productID:
+                Label(detailFrame, text=f"ID: {row[0]}").pack(side="left")
+                Label(detailFrame, text=f"Name: {row[1]}").pack(side="left")
+                Label(detailFrame, text=f"Storage: {row[2]}").pack(side="left")
+                Label(detailFrame, text=f"Color: {row[3]}").pack(side="left")
+                Label(detailFrame, text=f"Price: {row[4]}").pack(side="left")
+                Label(detailFrame, text=f"Quantity: {row[5]}").pack(side="left")
+                Label(detailFrame, text=f"Sale Quantity: {quantity}").pack(side="left")
+
+    buttonFrame = Frame(confirm)
+    buttonFrame.pack(
+        fill=tk.X,
+        pady=10,
+        padx=20,
+    )
+
+    confirm_button = tk.Button(
+        buttonFrame,
+        text="Confirm Sale",
+        height=3,
+        command=lambda: [
+            sellProductByID(productID, quantity),
+            confirm.destroy(),
+        ],
+    )
+    confirm_button.pack(side="left", fill=tk.X, expand=True, padx=10)
+
+    cancel_button = tk.Button(
+        buttonFrame,
+        text="Cancel",
+        height=3,
+        command=confirm.destroy,
+    )
+    cancel_button.pack(side="left", fill=tk.X, expand=True, padx=10)
+
+
+def sellProductByID(productID, quantity):
+    path = "product.csv"
+    with open(path, mode="r") as file:
+        reader = csv.reader(file)
+        rows = list(reader)
+
+    with open(path, mode="w", newline="") as file:
+        writer = csv.writer(file)
+        for row in rows:
+            if row[0] == productID:
+                current_quantity = int(row[5])
+                new_quantity = current_quantity - int(quantity)
                 if new_quantity < 0:
                     return
-                sheet.cell(row=cell.row, column=6).value = new_quantity
-                break
+                row[5] = str(new_quantity)
+            writer.writerow(row)
 
-    workbook.save(path)
     load_data()
 
 
@@ -403,21 +520,20 @@ def load_data():
         if isinstance(widget, ttk.Treeview):
             widget.destroy()
 
-    path = "product.xlsx"
-    workbook = openpyxl.load_workbook(path)
-    sheet = workbook.active
+    path = "product.csv"
+    with open(path, mode="r") as file:
+        reader = csv.reader(file)
+        rows = list(reader)
 
-    list_values = list(sheet.values)
-
-    cols = list_values[0]
+    cols = rows[0]
     tree = ttk.Treeview(window, columns=cols, show="headings")
 
     for col_name in cols:
         tree.heading(col_name, text=col_name)
     tree.pack(expand=True, fill="y")
 
-    for value_tuple in list_values[1:]:
-        tree.insert("", tk.END, values=value_tuple)
+    for row in rows[1:]:
+        tree.insert("", tk.END, values=row)
 
 
 buttons = [

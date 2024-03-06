@@ -1,0 +1,89 @@
+﻿ID,Name,Storage,Color,Price,Quantity
+1,iPhone 15 Pro,32 GB,Titanium Black,41900,22
+2,iPhone 15 Pro,128 GB,Titanium Blue,41900,15
+3,iPhone 15 Pro,128 GB,Titanium White,41900,30
+4,iPhone 15 Pro,128 GB,Titanium Natural,41900,26
+5,iPhone 15 Pro,256 GB,Titanium Black,45900,20
+6,iPhone 15 Pro,256 GB,Titanium Blue,45900,31
+7,iPhone 15 Pro,256 GB,Titanium White,45900,24
+8,iPhone 15 Pro,256 GB,Titanium Natural,45900,35
+9,iPhone 15 Pro,512 GB,Titanium Black,54900,31
+10,iPhone 15 Pro,512 GB,Titanium Blue,54900,21
+11,iPhone 15 Pro,512 GB,Titanium White,54900,26
+12,iPhone 15 Pro,512 GB,Titanium Natural,54900,31
+13,iPhone 15 Pro,1 TB,Titanium Black,63900,25
+14,iPhone 15 Pro,1 TB,Titanium Blue,63900,23
+15,iPhone 15 Pro,1 TB,Titanium White,63900,16
+16,iPhone 15 Pro,1 TB,Titanium Natural,63900,19
+17,iPhone 15,128 GB,Black,32900,32
+18,iPhone 15,128 GB,Blue,32900,25
+19,iPhone 15,128 GB,Green,32900,30
+20,iPhone 15,128 GB,Pink,32900,27
+21,iPhone 15,128 GB,Yellow,32900,20
+22,iPhone 15,256 GB,Black,36900,35
+23,iPhone 15,256 GB,Blue,36900,25
+24,iPhone 15,256 GB,Green,36900,24
+25,iPhone 15,256 GB,Pink,36900,20
+26,iPhone 15,256 GB,Yellow,36900,31
+27,iPhone 15,512 GB,Black,45900,40
+28,iPhone 15,512 GB,Blue,45900,32
+29,iPhone 15,512 GB,Green,45900,22
+30,iPhone 15,512 GB,Pink,45900,20
+31,iPhone 15,512 GB,Yellow,45900,15
+32,iPhone 14 Pro,128 GB,Midnight,32900,40
+33,iPhone 14 Pro,128 GB,Starlight,32900,34
+34,iPhone 14 Pro,128 GB,Blue,32900,26
+35,iPhone 14 Pro,128 GB,(Product)Red,32900,14
+36,iPhone 14 Pro,128 GB,Purple,32900,23
+37,iPhone 14 Pro,256 GB,Midnight,36900,27
+38,iPhone 14 Pro,256 GB,Starlight,36900,26
+39,iPhone 14 Pro,256 GB,Blue,36900,22
+40,iPhone 14 Pro,256 GB,(Product)Red,36900,15
+41,iPhone 14 Pro,256 GB,Purple,36900,17
+42,iPhone 14 Pro,512 GB,Midnight,45900,22
+43,iPhone 14 Pro,512 GB,Starlight,45900,33
+44,iPhone 14 Pro,512 GB,Blue,45900,30
+45,iPhone 14 Pro,512 GB,(Product)Red,45900,11
+46,iPhone 14 Pro,512 GB,Purple,45900,29
+47,iPhone 14,128 GB,Midnight,29900,31
+48,iPhone 14,128 GB,Starlight,29900,30
+49,iPhone 14,128 GB,Blue,29900,25
+50,iPhone 14,128 GB,(Product)Red,29900,14
+51,iPhone 14,128 GB,Purple,29900,18
+52,iPhone 14,256 GB,Midnight,33900,29
+53,iPhone 14,256 GB,Starlight,33900,25
+54,iPhone 14,256 GB,Blue,33900,18
+55,iPhone 14,256 GB,(Product)Red,33900,15
+56,iPhone 14,256 GB,Purple,33900,20
+57,iPhone 14,512 GB,Midnight,42900,31
+58,iPhone 14,512 GB,Starlight,42900,36
+59,iPhone 14,512 GB,Blue,42900,23
+60,iPhone 14,512 GB,(Product)Red,42900,20
+61,iPhone 14,512 GB,Purple,42900,24
+62,iPhone 13,128 GB,Midnight,24900,40
+63,iPhone 13,128 GB,Starlight,24900,36
+64,iPhone 13,128 GB,Blue,24900,28
+65,iPhone 13,128 GB,(Product)Red,24900,15
+66,iPhone 13,128 GB,Pink,24900,20
+67,iPhone 13,128 GB,Green,24900,20
+68,iPhone 13,256 GB,Midnight,28900,30
+69,iPhone 13,256 GB,Starlight,28900,32
+70,iPhone 13,256 GB,Blue,28900,21
+71,iPhone 13,256 GB,(Product)Red,28900,12
+72,iPhone 13,256 GB,Pink,28900,15
+73,iPhone 13,256 GB,Green,28900,15
+74,iPhone 13,512 GB,Midnight,37900,25
+75,iPhone 13,512 GB,Starlight,37900,22
+76,iPhone 13,512 GB,Blue,37900,15
+77,iPhone 13,512 GB,(Product)Red,37900,10
+78,iPhone 13,512 GB,Pink,37900,13
+79,iPhone 13,512 GB,Green,37900,16
+80,iPhone SE,64 GB,(Product)Red,17900,15
+81,iPhone SE,64 GB,Midnight,17900,20
+82,iPhone SE,64 GB,Starlight,17900,20
+83,iPhone SE,128 GB,(Product)Red,19900,10
+84,iPhone SE,128 GB,Midnight,19900,22
+85,iPhone SE,128 GB,Starlight,19900,20
+86,iPhone SE,256 GB,(Product)Red,23900,10
+87,iPhone SE,256 GB,Midnight,23900,15
+88,iPhone SE,256 GB,Starlight,23900,15
